@@ -224,6 +224,22 @@ h1.brand span{color:#F4A261;}
 
 /* Screen flash */
 #screen-flash{position:fixed;inset:0;z-index:500;pointer-events:none;opacity:0;transition:opacity .08s;}
+
+/* READY POPUP */
+#ready-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,12,22,.96);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px;}
+#ready-overlay.active{display:flex;}
+.ready-box{width:100%;max-width:340px;background:#132338;border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 24px;text-align:center;}
+.ready-icon{font-size:48px;margin-bottom:14px;}
+.ready-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
+.ready-sub{font-size:12px;color:#4A6785;margin-bottom:20px;line-height:1.6;}
+.ready-checks{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;text-align:left;}
+.ready-check{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;}
+.ready-check-icon{font-size:22px;flex-shrink:0;}
+.ready-check-text strong{display:block;font-size:13px;font-weight:700;}
+.ready-check-text small{font-size:11px;color:#4A6785;}
+.ready-btn{width:100%;padding:14px;border-radius:12px;background:#2A9D8F;border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+.ready-btn:active{opacity:.85;}
+.ready-skip{font-size:11px;color:#4A6785;margin-top:12px;cursor:pointer;text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -240,6 +256,40 @@ h1.brand span{color:#F4A261;}
     <button class="pin-submit" onclick="checkPin()">Masuk</button>
     <div class="pin-error" id="pin-error"></div>
     <div class="pin-cancel" onclick="closePinOverlay()">Batal</div>
+  </div>
+</div>
+
+<!-- READY POPUP -->
+<div id="ready-overlay">
+  <div class="ready-box">
+    <div class="ready-icon">📳</div>
+    <div class="ready-title">Sebelum Mulai</div>
+    <div class="ready-sub">Pastikan HP kamu siap menerima peringatan dengan mengaktifkan pengaturan berikut:</div>
+    <div class="ready-checks">
+      <div class="ready-check">
+        <span class="ready-check-icon">🔊</span>
+        <div class="ready-check-text">
+          <strong>Aktifkan Volume</strong>
+          <small>Keluarkan HP dari mode senyap agar suara peringatan terdengar</small>
+        </div>
+      </div>
+      <div class="ready-check">
+        <span class="ready-check-icon">📳</span>
+        <div class="ready-check-text">
+          <strong>Aktifkan Getaran</strong>
+          <small>Pastikan getaran HP tidak dimatikan di pengaturan suara</small>
+        </div>
+      </div>
+      <div class="ready-check">
+        <span class="ready-check-icon">🌟</span>
+        <div class="ready-check-text">
+          <strong>Layar Tetap Menyala</strong>
+          <small>Jangan biarkan layar mati agar peringatan tidak terlewat</small>
+        </div>
+      </div>
+    </div>
+    <button class="ready-btn" onclick="confirmReady()">✓ Siap! Buka Receiver</button>
+    <div class="ready-skip" onclick="confirmReady()">Lewati, lanjutkan tanpa pengecekan</div>
   </div>
 </div>
 
@@ -260,7 +310,7 @@ h1.brand span{color:#F4A261;}
           <p>Kirim sinyal peringatan bencana ke seluruh warga</p>
         </div>
       </div>
-      <div class="mode-card rx-card" onclick="goTo('rx')">
+      <div class="mode-card rx-card" onclick="openReadyPopup()">
         <div class="card-icon">📳</div>
         <div class="card-text">
           <h3>Receiver Warga</h3>
@@ -556,6 +606,15 @@ function goTo(s){
   if(s==='rx'){ initFB(); startRxListener(); }
   if(s==='mon'){ initFB(); monRefresh(); monAutoRefresh(); }
   if(s==='home'){ stopRxListener(); }
+}
+
+/* ══ READY POPUP ═════════════════════════════════ */
+function openReadyPopup(){
+  document.getElementById('ready-overlay').classList.add('active');
+}
+function confirmReady(){
+  document.getElementById('ready-overlay').classList.remove('active');
+  goTo('rx');
 }
 
 /* ══ PIN ═════════════════════════════════════════ */
