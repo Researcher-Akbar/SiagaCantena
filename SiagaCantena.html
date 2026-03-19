@@ -430,7 +430,7 @@ h1.brand span{color:#F4A261;}
 const firebaseConfig = {
   apiKey:            "AIzaSyA4rDtczaa_colYOUhqZZS48FZ2Wd0-ePI",
   authDomain:        "siagacantena.firebaseapp.com",
-  databaseURL:       "https://GANTI_PROJECT_ID-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:       "https://siagacantena-default-rtdb.firebaseio.com",
   projectId:         "siagacantena",
   storageBucket:     "siagacantena.firebasestorage.app",
   messagingSenderId: "880855710987",
@@ -444,11 +444,21 @@ function initFirebase(){
   try {
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.database();
-  } catch(e){ db = null; }
+    console.log('Firebase connected ✓');
+    return true;
+  } catch(e){
+    console.error('Firebase error:', e);
+    db = null;
+    return false;
+  }
 }
 
 function startRxListener(){
-  if(!db) return;
+  if(!db){ 
+    const sub = document.getElementById('rx-sub');
+    if(sub) sub.textContent = '🔴 Gagal konek — cek databaseURL';
+    return; 
+  }
   if(rxListenerRef) rxListenerRef.off();
   rxListenerRef = db.ref('siagacantena/alert');
   rxListenerRef.on('value', snap => {
@@ -457,6 +467,9 @@ function startRxListener(){
     if(Date.now() - data.timestamp < 30000){
       triggerAlert(data.id);
     }
+  }, err => {
+    const sub = document.getElementById('rx-sub');
+    if(sub) sub.textContent = '🔴 Error: ' + err.message;
   });
   const sub = document.getElementById('rx-sub');
   if(sub) sub.textContent = '🟢 Terhubung — Menunggu Sinyal';
